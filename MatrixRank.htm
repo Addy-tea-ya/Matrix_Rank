@@ -1,0 +1,176 @@
+<html>
+    <head>
+        <title>Matrix Rank</title>
+        <script src="http://mlweb.loria.fr/lalolib.js"></script>
+        <script type = "text/javascript">
+        
+        function f1()
+        {
+        var n = document.getElementById("idname");
+        var n1 = document.getElementById("idname1");
+        var no=parseInt(n.options[n.selectedIndex].value,10);
+        var no1=parseInt(n1.options[n1.selectedIndex].value,10);
+        for(var i=0;i<no;i++)
+            {
+                for(var j=0;j<no1;j++)
+                {
+                var textfield = document.createElement("input");
+                textfield.type = "text";
+                textfield.value = "";
+                textfield.size = "1";
+                textfield.id = String(i)+String(j);
+                document.getElementById('form').appendChild(textfield);
+                }
+                var textfield = document.createElement("P");                                         
+                document.getElementById("form").appendChild(textfield); 
+            }
+            
+        
+        }
+        function f2()
+            {   a=[];
+                b=[];
+                var n = document.getElementById("idname");
+                var n1 = document.getElementById("idname1");
+                var no=parseInt(n.options[n.selectedIndex].value,10);
+                var no1=parseInt(n1.options[n1.selectedIndex].value,10);
+                for(var i=0;i<no;i++)
+            {
+                for(var j=0;j<no1;j++)
+                {
+                b.push(parseFloat(document.getElementById(String(i)+String(j)).value));
+                }
+                a.push(b);
+                b=[]; 
+            }
+            var rank1=document.getElementById("i1").value;
+            if(rank1==rank(mat(a)))
+            {
+                e=document.getElementById("p1");
+                e.style.color="Green";
+                e.innerHTML="Correct";
+            }
+            else
+            {
+                e=document.getElementById("p1");
+                e.style.color="Red";
+                e.innerHTML="Incorrect";
+            }
+            }    
+var url = "http://localhost:5000/todo/api/v1.0/rank";
+function f3()
+{
+                a=[];
+                b=[];
+                var n = document.getElementById("idname");
+                var n1 = document.getElementById("idname1");
+                var no=parseInt(n.options[n.selectedIndex].value,10);
+                var no1=parseInt(n1.options[n1.selectedIndex].value,10);
+                for(var i=0;i<no;i++)
+            {
+                for(var j=0;j<no1;j++)
+                {
+                b.push(parseFloat(document.getElementById(String(i)+String(j)).value));
+                }
+                a.push(b);
+                b=[]; 
+            }
+var data = {};
+data.matrix = a;
+data.description  = "Snow";
+data.l1="1";
+data.l2="2";
+data.l0="0";
+var json = JSON.stringify(data);
+
+var xhr = new XMLHttpRequest();
+xhr.open("POST", url, true);
+xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+
+xhr.onload = function () {
+    var rec=JSON.parse(xhr.responseText);
+	for(var i=0;i<rec['task']['l2'];i++)
+    {
+        var t=document.createElement("p");
+        t.id= "s"+String(i);
+        t.value=rec['task']['description'][i];
+        document.getElementById('form1').appendChild(t);
+        for(var j=0;j<rec['task']['l1'];j++)
+        {
+            for(var k=0;k<rec['task']['l0'];k++)
+            {
+            var y=document.createElement("b");
+            y.id="a"+String(i)+String(j)+String(k);
+            y.value=rec['task']['matrix'][i][j][k].toFixed(3);
+            document.getElementById('form1').appendChild(y);
+            }
+            var o=document.createElement("br");
+            o.id="a"+String(i)+String(j);
+            document.getElementById('form1').appendChild(o);
+        }
+    }
+    for(var i=0;i<rec['task']['l2'];i++)
+    {
+        t1=document.getElementById("s"+String(i)).value;
+        document.getElementById("s"+String(i)).innerHTML = (t1);
+        for(var j=0;j<rec['task']['l1'];j++)
+        {   
+            for(var k=0;k<rec['task']['l0'];k++)
+            {
+            y1=document.getElementById("a"+String(i)+String(j)+String(k)).value;
+            document.getElementById("a"+String(i)+String(j)+String(k)).innerHTML = (y1+"&emsp;");
+            }
+            o1=document.getElementById("a"+String(i)+String(j));
+        }
+
+    }
+    var users = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "201") {
+		console.table(users);
+	} else {
+		console.error(users);
+	}
+}
+
+xhr.send(json);
+
+}
+    </script>
+    <body>
+        <form id="form">
+            Rows = 
+            <select id="idname" placeholder="Rows">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+             Columns = 
+            <select id="idname1" placeholder="Columns">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+            <p type="type" onclick="f1()"  value="">Click Here</p>
+            
+        </form>
+        <br>
+        Enter Rank 
+        <input id="i1" placeholder="Rank" size="1">
+        <button id="but" onclick="f2()">Submit</button><br>
+        <p id="p1"></p>
+        <button onclick="f3()">Solution</button>
+        <form id="form1">
+
+        </form>
+       
+        
+
+    </body>
+    </head>
+</html>
